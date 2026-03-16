@@ -6,7 +6,7 @@
 
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Syne&weight=700&size=24&duration=2800&pause=1200&color=818CF8&center=true&vCenter=true&multiline=false&width=680&height=60&lines=Classify+%E2%86%92+Route+%E2%86%92+Auto-Resolve+in+%3C1s+%E2%9A%A1;LangChain+%2B+Gemini+2.0+Flash+%2B+FastAPI+%F0%9F%A4%96;~%240.0001+per+ticket+%C2%B7+95%25+Accuracy+%F0%9F%8E%AF;Built+for+Scale.+Designed+for+Speed.+%F0%9F%9A%80" alt="Typing SVG" />
+<img src="https://readme-typing-svg.demolab.com?font=Syne&weight=700&size=24&duration=2800&pause=1200&color=818CF8&center=true&vCenter=true&multiline=false&width=680&height=60&lines=Classify+%E2%86%92+Route+%E2%86%92+Auto-Resolve+in+%3C1s+%E2%9A%A1;LangChain+%2B+Grok+Ai+%2B+FastAPI+%F0%9F%A4%96;~%240.0001+per+ticket+%C2%B7+95%25+Accuracy+%F0%9F%8E%AF;Built+for+Scale.+Designed+for+Speed.+%F0%9F%9A%80" alt="Typing SVG" />
 
 </div>
 
