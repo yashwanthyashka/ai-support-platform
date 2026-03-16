@@ -24,10 +24,9 @@ logger = logging.getLogger(__name__)
 
 # ─── New ──────────────────────────────────────────────────────────────────────
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-flash",
+    model="gemini-2.0-flash",
     temperature=0,
     google_api_key=settings.GEMINI_API_KEY,
-    request_timeout=30,
 )
 
 # ─── Team → Category Mapping (edit as needed) ─────────────────────────────────
