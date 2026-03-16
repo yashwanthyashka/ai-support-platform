@@ -1,12 +1,13 @@
 import sys
 import os
+import asyncio
 sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks
 from sqlalchemy.orm import Session
 from sqlalchemy import func
 from typing import List, Optional
-from database import get_db
+from database import get_db, SessionLocal
 import models, schemas
 from services.classifier import analyze_ticket
 from services.router_service import route_ticket
@@ -14,34 +15,27 @@ from services.router_service import route_ticket
 router = APIRouter(prefix="/tickets", tags=["Tickets"])
 
 
-# ─── POST /tickets — Submit a new ticket ─────────────────────────────────────
+# ─── Background AI Task ───────────────────────────────────────────────────────
 
-@router.post("/", response_model=schemas.TicketResponse, status_code=201)
-async def create_ticket(payload: schemas.TicketCreate, db: Session = Depends(get_db)):
+async def run_ai_analysis(ticket_id: int, subject: str, body: str, customer_name: str):
     """
-    1. Save raw ticket to DB
-    2. Send to AI for classification, routing, and optional auto-answer
-    3. Update ticket with AI results
-    4. Return enriched ticket
+    Runs AI classification in the background.
+    Creates its own DB session — completely independent of the request session.
     """
-    # Step 1 — persist raw ticket
-    ticket = models.Ticket(**payload.model_dump())
-    db.add(ticket)
-    db.commit()
-    db.refresh(ticket)
-
-    # Step 2 — AI analysis
+    db = SessionLocal()
     try:
         analysis = await analyze_ticket(
-            subject=ticket.subject,
-            body=ticket.body,
-            customer_name=ticket.customer_name,
+            subject=subject,
+            body=body,
+            customer_name=customer_name,
         )
 
-        # Step 3 — routing
         routing = route_ticket(analysis)
 
-        # Step 4 — update ticket
+        ticket = db.query(models.Ticket).filter(models.Ticket.id == ticket_id).first()
+        if not ticket:
+            return
+
         ticket.category        = analysis.category
         ticket.sub_category    = analysis.sub_category
         ticket.priority        = analysis.priority
@@ -58,15 +52,51 @@ async def create_ticket(payload: schemas.TicketCreate, db: Session = Depends(get
             ticket.status = "assigned"
 
         db.commit()
-        db.refresh(ticket)
 
     except Exception as e:
-        # Don't fail the whole request — ticket is saved, just not AI-enriched
-        ticket.status = "open"
-        ticket.resolution_note = f"AI analysis failed: {str(e)}"
-        db.commit()
-        db.refresh(ticket)
+        try:
+            ticket = db.query(models.Ticket).filter(models.Ticket.id == ticket_id).first()
+            if ticket:
+                ticket.status          = "open"
+                ticket.resolution_note = f"AI analysis failed: {str(e)}"
+                db.commit()
+        except Exception:
+            pass
+    finally:
+        db.close()
 
+
+# ─── POST /tickets — Submit a new ticket ─────────────────────────────────────
+
+@router.post("/", response_model=schemas.TicketResponse, status_code=201)
+async def create_ticket(
+    payload: schemas.TicketCreate,
+    background_tasks: BackgroundTasks,
+    db: Session = Depends(get_db),
+):
+    """
+    1. Validate and save raw ticket to DB immediately
+    2. Return response instantly (no waiting for AI)
+    3. AI classification runs in background
+    4. Refresh dashboard after 15-20 seconds to see AI results
+    """
+    # Step 1 — persist raw ticket instantly
+    ticket = models.Ticket(**payload.model_dump())
+    ticket.status = "processing"
+    db.add(ticket)
+    db.commit()
+    db.refresh(ticket)
+
+    # Step 2 — queue AI analysis as background task (does NOT block response)
+    background_tasks.add_task(
+        run_ai_analysis,
+        ticket.id,
+        ticket.subject,
+        ticket.body,
+        ticket.customer_name,
+    )
+
+    # Step 3 — return immediately
     return ticket
 
 
@@ -136,9 +166,9 @@ def delete_ticket(ticket_id: int, db: Session = Depends(get_db)):
 
 @router.get("/stats/dashboard", response_model=schemas.DashboardStats)
 def dashboard_stats(db: Session = Depends(get_db)):
-    total   = db.query(models.Ticket).count()
-    open_   = db.query(models.Ticket).filter(models.Ticket.status == "open").count()
-    auto_r  = db.query(models.Ticket).filter(models.Ticket.is_auto_resolved == True).count()
+    total    = db.query(models.Ticket).count()
+    open_    = db.query(models.Ticket).filter(models.Ticket.status == "open").count()
+    auto_r   = db.query(models.Ticket).filter(models.Ticket.is_auto_resolved == True).count()
     avg_conf = db.query(func.avg(models.Ticket.confidence)).scalar() or 0.0
 
     by_cat = {
