@@ -1,6 +1,6 @@
 <div align="center">
 
-![Banner](https://readmeforge.natrajx.in/api/banner?text=Hello%2C+Yash+Here%21&subtext=Full-Stack+Developer+%C2%B7+Open+Source&metal=copper&type=wave&height=217&width=1200&animation=twinkling&align=center&section=header&theme=dark&fontFamily=Orbitron)
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:0ea5e9,50:6366f1,100:8b5cf6&height=200&section=header&text=Triage%20AI&fontSize=60&fontColor=ffffff&fontAlignY=38&desc=AI-Powered%20Customer%20Support%20Automation&descAlignY=58&descSize=18&animation=fadeIn" width="100%"/>
 
 <img src="https://readme-typing-svg.herokuapp.com?font=JetBrains+Mono&size=22&duration=3000&pause=1000&color=6366F1&center=true&vCenter=true&multiline=true&width=700&height=80&lines=Classify+%E2%86%92+Route+%E2%86%92+Auto-Resolve+%F0%9F%A4%96;Powered+by+LangChain+%2B+Gemini+%2B+FastAPI" alt="Typing SVG" />
 
