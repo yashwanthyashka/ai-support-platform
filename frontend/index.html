@@ -302,8 +302,7 @@
 </div>
 
 <script>
-  const API = 'http://localhost:8000/api/v1';
-
+  const API = window.location.origin + '/api/v1';
   // ── Navigation ──────────────────────────────────────────────────────────────
   function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
