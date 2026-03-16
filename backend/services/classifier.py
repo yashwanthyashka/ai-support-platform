@@ -11,6 +11,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
 
 import json
 import logging
+from langchain_groq import ChatGroq
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.output_parsers import JsonOutputParser
@@ -23,10 +24,10 @@ logger = logging.getLogger(__name__)
 # ─── LLM Setup ───────────────────────────────────────────────────────────────
 
 # ─── New ──────────────────────────────────────────────────────────────────────
-llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash",
+llm = ChatGroq(
+    model="llama-3.1-8b-instant",
     temperature=0,
-    google_api_key=settings.GEMINI_API_KEY,
+    api_key=settings.GROQ_API_KEY,
 )
 
 # ─── Team → Category Mapping (edit as needed) ─────────────────────────────────

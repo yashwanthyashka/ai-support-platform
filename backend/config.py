@@ -7,8 +7,7 @@ class Settings(BaseSettings):
     # Database
     DATABASE_URL: str = "postgresql+psycopg://postgres:yashka@localhost:5432/ai_support_db"
 
-    # OpenAI
-    GEMINI_API_KEY: str = ""
+    GROQ_API_KEY: str = ""
 
     # App
     APP_SECRET_KEY: str = "change-me"
