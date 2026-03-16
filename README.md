@@ -437,10 +437,10 @@ curl -X POST https://ai-support-platform-hn4y.onrender.com/api/v1/tickets/ \
   ◆  FREE-TIER PRODUCTION STACK  ◆
 
      ┌────────────────┐     ┌────────────────┐     ┌────────────────┐
-     │   Render.com   │     │   Neon.tech    │     │  Google AI     │
-     │                │     │                │     │  Studio        │
+     │   Render.com   │     │   Neon.tech    │     │  Grok AI       │
+     │                │     │                │     │                │
      │   Backend API  │────►│  PostgreSQL    │  +  │                │
-     │   (Free Tier)  │     │  (Free Tier)   │     │  Gemini Flash  │
+     │   (Free Tier)  │     │  (Free Tier)   │     │  Grok ai       │
      │                │     │                │     │  1500 req/day  │
      └────────────────┘     └────────────────┘     └────────────────┘
 ```
